@@ -3,16 +3,18 @@ const pdfParse = require('pdf-parse');
 const { OpenAI } = require('openai');
 const { GoogleGenAI } = require('@google/genai');
 
-const isMockMode = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE';
+const hasOpenAI = process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'YOUR_OPENAI_API_KEY_HERE';
+const hasGemini = process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'YOUR_GEMINI_KEY_HERE';
 
-const openai = isMockMode ? null : new OpenAI({
+const isMockMode = !hasOpenAI && !hasGemini;
+
+const openai = hasOpenAI ? new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
-});
+}) : null;
 
-// Using Gemini as fallback
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY || 'MISSING_GEMINI_KEY'
-});
+const ai = hasGemini ? new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+}) : null;
 
 async function deleteFile(filePath) {
     try {
