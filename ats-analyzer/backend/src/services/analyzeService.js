@@ -172,6 +172,11 @@ exports.processTailoredResume = async (pdfPath, jobDescription) => {
         };
     }
 
+    // Default to Gemini if OpenAI is missing
+    if (!openai && ai) {
+        return analyzeWithGemini(resumeText, jobDescription, false);
+    }
+
     const systemPrompt = `
 You are an expert ATS optimizer.
 Compare the applicant's resume against the target Job Description.
