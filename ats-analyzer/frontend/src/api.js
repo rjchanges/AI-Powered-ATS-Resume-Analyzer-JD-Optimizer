@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: '/api', // Vite proxy forwards to backend
+    baseURL: import.meta.env.VITE_API_URL || '/api', // Uses Vite proxy locally, Vercel env variable in production
     timeout: 120_000,
 });
 
@@ -12,10 +12,8 @@ export const analyzeGeneral = async (formData) => {
         });
         return response.data;
     } catch (error) {
-        if (error.response && error.response.data && error.response.data.error) {
-            throw new Error(error.response.data.error);
-        }
-        throw new Error(error.message || 'An unexpected error occurred during general analysis.');
+        const message = error?.response?.data?.error || error?.message || 'An unexpected error occurred during general analysis.';
+        throw new Error(typeof message === 'string' ? message : JSON.stringify(message));
     }
 };
 
@@ -26,9 +24,7 @@ export const analyzeTailored = async (formData) => {
         });
         return response.data;
     } catch (error) {
-        if (error.response && error.response.data && error.response.data.error) {
-            throw new Error(error.response.data.error);
-        }
-        throw new Error(error.message || 'An unexpected error occurred during tailored analysis.');
+        const message = error?.response?.data?.error || error?.message || 'An unexpected error occurred during tailored analysis.';
+        throw new Error(typeof message === 'string' ? message : JSON.stringify(message));
     }
 };
