@@ -150,6 +150,15 @@ export default function JDOptimizer() {
                                 <h4 style={{ color: '#fff', borderBottom: '1px solid #334155', paddingBottom: '0.25rem', marginBottom: '0.75rem', marginTop: '1rem' }}>Missing Keywords</h4>
                                 <TagGrid>{result.missing_keywords?.map((k, i) => <MissingTag key={i}><FaExclamationTriangle size={12} /> {k}</MissingTag>)}</TagGrid>
 
+                                {result.missing_keywords?.length > 0 && (
+                                    <div style={{ background: 'rgba(59, 130, 246, 0.1)', borderLeft: '4px solid #3b82f6', padding: '1rem', borderRadius: '4px', marginTop: '1.5rem' }}>
+                                        <h4 style={{ color: '#3b82f6', marginTop: 0, marginBottom: '0.5rem', fontSize: '1rem' }}>💡 How to boost your score:</h4>
+                                        <p style={{ color: '#cbd5e1', fontSize: '0.9rem', margin: 0, lineHeight: 1.5 }}>
+                                            Don't just list these missing keywords! Weave them naturally into your <strong>Experience bullet points</strong> or <strong>Professional Summary</strong>. Make sure they accurately reflect your skills and represent how you utilized them in past roles.
+                                        </p>
+                                    </div>
+                                )}
+
                                 {result.priority_missing_skills?.length > 0 && (
                                     <>
                                         <h4 style={{ color: '#f59e0b', marginTop: '1.5rem' }}>Priority Skills to Consider Adding</h4>
@@ -183,12 +192,52 @@ export default function JDOptimizer() {
                         <div style={{
                             position: 'relative',
                             background: '#e2e8f0', // Slight gray to contrast the white paper
-                            padding: '2rem',
+                            padding: '1rem',
                             borderRadius: '12px',
                             overflowX: 'auto',
-                            boxShadow: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)'
+                            boxShadow: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+                            display: 'flex',
+                            justifyContent: 'center'
                         }}>
-                            <div id="resume-preview-export" style={{ background: 'white', minHeight: '1000px', width: '100%', maxWidth: '850px', margin: '0 auto', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)' }}>
+                            <div id="resume-preview-export" style={{ background: 'white', minHeight: '1100px', width: '100%', maxWidth: '850px', margin: '0 auto', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', transformOrigin: 'top center' }} className="responsive-preview">
+                                <style>
+                                    {`
+                                        @media (max-width: 850px) {
+                                            .responsive-preview {
+                                                min-height: auto !important;
+                                            }
+                                        }
+                                        /* 
+                                         * Intelligent CSS Scaling for mobile 
+                                         * Shrinks the A4 page proportionally so alignment never breaks,
+                                         * acting like a real document preview.
+                                         */
+                                        @media (max-width: 768px) {
+                                            .responsive-preview {
+                                                transform: scale(0.85);
+                                                margin-bottom: -15%; /* Reduce whitespace below scaled element */
+                                            }
+                                        }
+                                        @media (max-width: 600px) {
+                                            .responsive-preview {
+                                                transform: scale(0.65);
+                                                margin-bottom: -35%;
+                                            }
+                                        }
+                                        @media (max-width: 480px) {
+                                            .responsive-preview {
+                                                transform: scale(0.5);
+                                                margin-bottom: -50%;
+                                            }
+                                        }
+                                        @media (max-width: 380px) {
+                                            .responsive-preview {
+                                                transform: scale(0.42);
+                                                margin-bottom: -58%;
+                                            }
+                                        }
+                                    `}
+                                </style>
                                 <ProfessionalTemplate data={editableResumeData} />
                             </div>
                         </div>

@@ -43,6 +43,22 @@ const Input = styled.input`
   }
 `;
 
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  background: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.text};
+  font-family: ${({ theme }) => theme.fonts.body};
+  
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+`;
+
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.75rem;
@@ -140,9 +156,26 @@ export default function ResumeEditor({ data, onChange }) {
         onChange({ ...data, [field]: value });
     };
 
-    const handleSkillsChange = (e) => {
-        const skillsArray = e.target.value.split(',').map(s => s.trim());
-        handleChange('skills', skillsArray);
+    const handleSkillChange = (index, value) => {
+        const newSkills = [...(data.skills || [])];
+        newSkills[index] = value;
+        handleChange('skills', newSkills);
+    };
+
+    const handleAddSkill = () => {
+        const newSkills = [...(data.skills || []), ''];
+        handleChange('skills', newSkills);
+    };
+
+    const handleRemoveSkill = (index) => {
+        const newSkills = [...(data.skills || [])];
+        newSkills.splice(index, 1);
+        handleChange('skills', newSkills);
+    };
+
+    const handleStyleChange = (field, value) => {
+        const currentStyles = data.styles || { fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif", fontSize: '10pt', lineHeight: 1.5, alignment: 'left', layoutSpacing: 'normal' };
+        handleChange('styles', { ...currentStyles, [field]: value });
     };
 
     const handleReferencesChange = (e) => {
@@ -255,20 +288,72 @@ export default function ResumeEditor({ data, onChange }) {
                 </>
             )}
 
-            {/* Objective */}
+            {/* Formatting & Customization */}
             <SectionHeader>
-                <h3>Objective</h3>
-                {renderVisibilityToggle('objective', 'Objective')}
+                <h3>Formatting & Layout</h3>
             </SectionHeader>
-            {isVisible('objective') && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <FormGroup>
-                    <TextArea
-                        value={data.objective || ''}
-                        onChange={(e) => handleChange('objective', e.target.value)}
-                        placeholder="e.g. Seeking a challenging role..."
-                    />
+                    <Label>Font Family</Label>
+                    <Select
+                        value={data.styles?.fontFamily || "'Helvetica Neue', Helvetica, Arial, sans-serif"}
+                        onChange={(e) => handleStyleChange('fontFamily', e.target.value)}
+                    >
+                        <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica / Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="Tahoma, sans-serif">Tahoma</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                    </Select>
                 </FormGroup>
-            )}
+                <FormGroup>
+                    <Label>Base Font Size</Label>
+                    <Select
+                        value={data.styles?.fontSize || "10pt"}
+                        onChange={(e) => handleStyleChange('fontSize', e.target.value)}
+                    >
+                        <option value="9pt">Small (9pt)</option>
+                        <option value="10pt">Normal (10pt)</option>
+                        <option value="11pt">Large (11pt)</option>
+                        <option value="12pt">Larger (12pt)</option>
+                    </Select>
+                </FormGroup>
+                <FormGroup>
+                    <Label>Line Height (Spacing)</Label>
+                    <Select
+                        value={data.styles?.lineHeight || 1.5}
+                        onChange={(e) => handleStyleChange('lineHeight', Number(e.target.value))}
+                    >
+                        <option value={1.2}>Compact (1.2)</option>
+                        <option value={1.5}>Normal (1.5)</option>
+                        <option value={1.8}>Relaxed (1.8)</option>
+                    </Select>
+                </FormGroup>
+                <FormGroup>
+                    <Label>Text Alignment</Label>
+                    <Select
+                        value={data.styles?.alignment || "left"}
+                        onChange={(e) => handleStyleChange('alignment', e.target.value)}
+                    >
+                        <option value="left">Left Aligned</option>
+                        <option value="justify">Justified</option>
+                    </Select>
+                </FormGroup>
+                <FormGroup>
+                    <Label>Layout Spacing</Label>
+                    <Select
+                        value={data.styles?.layoutSpacing || "normal"}
+                        onChange={(e) => handleStyleChange('layoutSpacing', e.target.value)}
+                    >
+                        <option value="compact">Compact</option>
+                        <option value="normal">Normal</option>
+                        <option value="spacious">Spacious</option>
+                    </Select>
+                </FormGroup>
+            </div>
 
             {/* Summary */}
             <SectionHeader>
@@ -291,14 +376,23 @@ export default function ResumeEditor({ data, onChange }) {
                 {renderVisibilityToggle('skills', 'Skills')}
             </SectionHeader>
             {isVisible('skills') && (
-                <FormGroup>
-                    <Label>Comma separated</Label>
-                    <Input
-                        value={(data.skills || []).join(', ')}
-                        onChange={handleSkillsChange}
-                        placeholder="React, Node.js, Python..."
-                    />
-                </FormGroup>
+                <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {(data.skills || []).map((skill, index) => (
+                            <div key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <Input
+                                    value={skill || ''}
+                                    onChange={(e) => handleSkillChange(index, e.target.value)}
+                                    placeholder="e.g. React.js"
+                                />
+                                <RemoveButton onClick={() => handleRemoveSkill(index)}>Remove</RemoveButton>
+                            </div>
+                        ))}
+                    </div>
+                    <AddButton onClick={handleAddSkill}>
+                        + Add Skill
+                    </AddButton>
+                </>
             )}
 
             {/* Experience */}

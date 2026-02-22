@@ -11,6 +11,10 @@ export const PreviewContainer = styled.div`
   margin: 0 auto;
   min-height: 1100px; // A4 approx
   box-sizing: border-box;
+  
+  @media (max-width: 768px) {
+    min-height: auto;
+  }
 `;
 
 // Helper to check visibility
@@ -21,9 +25,13 @@ const isVisible = (data, section) => data?.visibility ? data.visibility[section]
    Professional Template
    ========================================= */
 const ProfWrapper = styled(PreviewContainer)`
-  padding: 3rem;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  padding: ${({ spacing }) => (spacing === 'compact' ? '2rem' : spacing === 'spacious' ? '4rem' : '3rem')};
+  font-family: ${({ fontFamily }) => fontFamily || "'Helvetica Neue', Helvetica, Arial, sans-serif"};
   color: #1a1a1a;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
 `;
 
 const ProfHeader = styled.div`
@@ -95,8 +103,19 @@ const SkillsGrid = styled.ul`
 
 export function ProfessionalTemplate({ data }) {
     if (!data) return null;
+    const styles = data.styles || {
+        fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        fontSize: '10pt',
+        lineHeight: 1.5,
+        alignment: 'left',
+        layoutSpacing: 'normal'
+    };
+
+    const sectionMb = styles.layoutSpacing === 'compact' ? '0.85rem' : styles.layoutSpacing === 'spacious' ? '1.75rem' : '1.25rem';
+    const innerMb = styles.layoutSpacing === 'compact' ? '0.5rem' : styles.layoutSpacing === 'spacious' ? '1.2rem' : '1rem';
+
     return (
-        <ProfWrapper>
+        <ProfWrapper fontFamily={styles.fontFamily} spacing={styles.layoutSpacing}>
             {isVisible(data, 'personal') && (
                 <ProfHeader>
                     <h1>{data.name || 'Your Name'}</h1>
@@ -112,92 +131,82 @@ export function ProfessionalTemplate({ data }) {
             )}
 
             {isVisible(data, 'summary') && data.summary && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>About Me</ProfSectionTitle>
-                    <div style={{ textAlign: 'justify', marginBottom: '1rem', fontSize: '10pt', lineHeight: 1.5, color: '#333' }}>
+                    <div style={{ textAlign: styles.alignment, marginBottom: innerMb, fontSize: styles.fontSize, lineHeight: styles.lineHeight, color: '#333' }}>
                         {data.summary}
                     </div>
-                </>
-            )}
-
-            {/* If there's an objective but no summary, show it here as About Me */}
-            {isVisible(data, 'objective') && data.objective && (!isVisible(data, 'summary') || !data.summary) && (
-                <>
-                    <ProfSectionTitle>About Me</ProfSectionTitle>
-                    <div style={{ textAlign: 'justify', marginBottom: '1rem', fontSize: '10pt', lineHeight: 1.5, color: '#333' }}>
-                        {data.objective}
-                    </div>
-                </>
+                </div>
             )}
 
             {isVisible(data, 'education') && data.education && data.education.length > 0 && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>Education</ProfSectionTitle>
                     {data.education.map((edu, i) => (
-                        <div key={i} style={{ marginBottom: '1.25rem' }}>
-                            <div style={{ display: 'flex', color: '#555', marginBottom: '0.15rem', fontSize: '10pt' }}>
+                        <div key={i} style={{ marginBottom: innerMb }}>
+                            <div style={{ display: 'flex', color: '#555', marginBottom: '0.15rem', fontSize: styles.fontSize }}>
                                 <span style={{ marginRight: '0.25rem' }}>{edu.school}</span>
                                 {edu.dates && <span> | {edu.dates}</span>}
                             </div>
-                            <div style={{ fontWeight: '800', fontSize: '10.5pt', color: '#111', marginBottom: '0.25rem' }}>{edu.degree}</div>
-                            {edu.details && <div style={{ textAlign: 'justify', lineHeight: 1.5, fontSize: '10pt', color: '#333' }}>{edu.details}</div>}
+                            <div style={{ fontWeight: '800', fontSize: `calc(${styles.fontSize} + 0.5pt)`, color: '#111', marginBottom: '0.25rem' }}>{edu.degree}</div>
+                            {edu.details && <div style={{ textAlign: styles.alignment, lineHeight: styles.lineHeight, fontSize: styles.fontSize, color: '#333' }}>{edu.details}</div>}
                         </div>
                     ))}
-                </>
+                </div>
             )}
 
             {isVisible(data, 'experience') && data.experience && data.experience.length > 0 && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>Work Experience</ProfSectionTitle>
                     {data.experience.map((exp, i) => (
-                        <div key={i} style={{ marginBottom: '1.25rem' }}>
-                            <div style={{ display: 'flex', color: '#555', marginBottom: '0.15rem', fontSize: '10pt' }}>
+                        <div key={i} style={{ marginBottom: innerMb }}>
+                            <div style={{ display: 'flex', color: '#555', marginBottom: '0.15rem', fontSize: styles.fontSize }}>
                                 <span style={{ marginRight: '0.25rem' }}>{exp.company}</span>
                                 {exp.dates && <span> | {exp.dates}</span>}
                             </div>
-                            <div style={{ fontWeight: '800', fontSize: '10.5pt', color: '#111', marginBottom: '0.25rem' }}>{exp.title}</div>
-                            <div style={{ textAlign: 'justify', lineHeight: 1.5, fontSize: '10pt', color: '#333', whiteSpace: 'pre-line' }}>{exp.description}</div>
+                            <div style={{ fontWeight: '800', fontSize: `calc(${styles.fontSize} + 0.5pt)`, color: '#111', marginBottom: '0.25rem' }}>{exp.title}</div>
+                            <div style={{ textAlign: styles.alignment, lineHeight: styles.lineHeight, fontSize: styles.fontSize, color: '#333', whiteSpace: 'pre-line' }}>{exp.description}</div>
                         </div>
                     ))}
-                </>
+                </div>
             )}
 
             {isVisible(data, 'skills') && data.skills && data.skills.length > 0 && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>Skills</ProfSectionTitle>
-                    <SkillsGrid>
+                    <SkillsGrid style={{ fontSize: styles.fontSize }}>
                         {data.skills.map((skill, index) => (
                             <li key={index}>{skill}</li>
                         ))}
                     </SkillsGrid>
-                </>
+                </div>
             )}
 
             {isVisible(data, 'projects') && data.projects && data.projects.length > 0 && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>Projects</ProfSectionTitle>
                     {data.projects.map((proj, i) => (
-                        <div key={i} style={{ marginBottom: '1.25rem' }}>
-                            <div style={{ fontWeight: '800', fontSize: '10.5pt', color: '#111', marginBottom: '0.25rem' }}>{proj.name}</div>
-                            <div style={{ textAlign: 'justify', lineHeight: 1.5, fontSize: '10pt', color: '#333', whiteSpace: 'pre-line' }}>{proj.description}</div>
+                        <div key={i} style={{ marginBottom: innerMb }}>
+                            <div style={{ fontWeight: '800', fontSize: `calc(${styles.fontSize} + 0.5pt)`, color: '#111', marginBottom: '0.25rem' }}>{proj.name}</div>
+                            <div style={{ textAlign: styles.alignment, lineHeight: styles.lineHeight, fontSize: styles.fontSize, color: '#333', whiteSpace: 'pre-line' }}>{proj.description}</div>
                         </div>
                     ))}
-                </>
+                </div>
             )}
 
             {isVisible(data, 'references') && data.references && data.references.length > 0 && (
-                <>
+                <div style={{ marginBottom: sectionMb }}>
                     <ProfSectionTitle>References</ProfSectionTitle>
-                    <div style={{ fontSize: '10pt', lineHeight: 1.5, whiteSpace: 'pre-line', color: '#333' }}>
+                    <div style={{ fontSize: styles.fontSize, textAlign: styles.alignment, lineHeight: styles.lineHeight, whiteSpace: 'pre-line', color: '#333' }}>
                         {data.references.join('\n')}
                     </div>
-                </>
+                </div>
             )}
 
             {isVisible(data, 'cover_letter') && data.cover_letter && (
                 <div style={{ pageBreakBefore: 'always' }}>
                     <ProfSectionTitle>Cover Letter</ProfSectionTitle>
-                    <div style={{ fontSize: '10pt', lineHeight: 1.5, whiteSpace: 'pre-line', color: '#333' }}>
+                    <div style={{ fontSize: styles.fontSize, textAlign: styles.alignment, lineHeight: styles.lineHeight, whiteSpace: 'pre-line', color: '#333' }}>
                         {data.cover_letter}
                     </div>
                 </div>
@@ -205,3 +214,4 @@ export function ProfessionalTemplate({ data }) {
         </ProfWrapper>
     );
 }
+
