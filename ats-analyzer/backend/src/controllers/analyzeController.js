@@ -16,10 +16,14 @@ exports.analyzeGeneral = async (req, res) => {
 
 exports.analyzeTailored = async (req, res) => {
     try {
-        const jobDescription = req.body.jobDescription;
+        let jobDescription = req.body.jobDescription;
         if (!jobDescription) {
             return res.status(400).json({ error: 'Job description is required.' });
         }
+
+        const { fetchJobDescription } = require('../utils/scraper');
+        jobDescription = await fetchJobDescription(jobDescription);
+
         if (!req.file) {
             return res.status(400).json({ error: 'Resume PDF is required.' });
         }

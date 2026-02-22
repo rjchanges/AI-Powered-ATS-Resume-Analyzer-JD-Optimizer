@@ -40,15 +40,15 @@ const TextArea = styled.textarea`
 `;
 
 export default function JobDescription({ value, onChange }) {
-    return (
-        <Container>
-            <Label htmlFor="job-description">Job Description</Label>
-            <TextArea
-                id="job-description"
-                placeholder="Paste the target job description here..."
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-            />
-        </Container>
-    );
+  return (
+    <Container>
+      <Label htmlFor="job-description">Job Description</Label>
+      <TextArea
+        id="job-description"
+        placeholder="Paste the target job description or job link (e.g., LinkedIn) here..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </Container>
+  );
 }
