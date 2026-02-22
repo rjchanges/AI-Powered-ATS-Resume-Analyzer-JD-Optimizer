@@ -161,7 +161,6 @@ exports.processTailoredResume = async (pdfPath, jobDescription) => {
                 "linkedin": "linkedin.com/in/janedoe",
                 "github": "github.com/janedoe",
                 "summary": "Software Engineer with 5 years experience.",
-                "objective": "Seeking a challenging role as a Frontend Developer to leverage my React skills.",
                 "skills": ["JavaScript", "React", "Node.js", "CSS"],
                 "experience": [{ "title": "Frontend Developer", "company": "Tech Corp", "dates": "2020-2023", "description": "Built scalable web platforms and optimized performance." }],
                 "education": [{ "degree": "B.S. Computer Science", "school": "State University", "dates": "2016-2020", "details": "Graduated with Honors." }],
@@ -179,21 +178,20 @@ Compare the applicant's resume against the target Job Description.
 1. Perform keyword gap analysis (extract technical/soft skills from JD, find what's missing in resume).
 2. Calculate a realistic ATS match percentage.
 3. Rewrite the resume to be fully optimized for this JD, ensuring keywords are inserted naturally.
-4. Also extract structural "resume_data" to render the optimized resume in visual templates. Ensure you extract education, objective, and references if they exist.
+4. Also extract structural "resume_data" to render the optimized resume in visual templates. Ensure you extract education, and references if they exist. Do NOT include an objective.
 
 Return ONLY a JSON object matching this schema:
 {
   "match_score": number (0-100),
   "matched_keywords": string[],
-  "missing_keywords": string[],
-  "priority_missing_skills": string[],
+  "missing_keywords": string[], // CRITICAL: You must explicitly list important technical and soft skills present in the JD but completely missing in the resume text.
+  "priority_missing_skills": string[], // CRITICAL: Top 2-3 most fatal missing skills that the candidate must add to pass ATS.
   "tailored_summary": string,
   "optimized_resume": string,
   "keyword_density_analysis": string[],
   "resume_data": {
     "name": string,
     "summary": string,
-    "objective": string,
     "skills": string[],
     "experience": [{"title":string, "company":string, "dates":string, "description":string}],
     "education": [{"degree":string, "school":string, "dates":string, "details":string}],
