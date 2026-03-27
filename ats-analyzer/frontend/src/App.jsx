@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { theme, GlobalStyle } from './theme';
+import { Analytics } from '@vercel/analytics/react';
 
 import Navbar from './components/Navbar';
 import ATSChecker from './pages/ATSChecker';
@@ -22,6 +23,7 @@ function App() {
           </main>
         </div>
       </BrowserRouter>
+      <Analytics />
     </ThemeProvider>
   );
 }
